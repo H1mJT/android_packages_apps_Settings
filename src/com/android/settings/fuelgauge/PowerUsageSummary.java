@@ -286,7 +286,7 @@ public class PowerUsageSummary extends PowerUsageBase implements
         mBatChgCyc = getResources().getString(R.string.config_batChargeCycle);
         // reload BatteryInfo and updateUI
         restartBatteryInfoLoader();
-        mCurrentBatteryCapacity.setSubtitle(parseBatterymAhText(mBatCurCap));
+        mCurrentBatteryCapacity.setSubtitle(parseBatterymAhText2(mBatCurCap));
         mDesignedBatteryCapacity.setSubtitle(parseBatterymAhText(mBatDesCap));
         mBatteryChargeCycles.setSubtitle(parseBatteryCycle(mBatChgCyc));
 
@@ -378,9 +378,21 @@ public class PowerUsageSummary extends PowerUsageBase implements
         return getResources().getString(R.string.status_unavailable);
     }
 
+    private String parseBatterymAhText2(String file) {
+        try {
+            return Integer.parseInt(readLine(file)) + " mAh";
+        } catch (IOException ioe) {
+            Log.e(TAG, "Cannot read battery capacity from "
+                    + file, ioe);
+        } catch (NumberFormatException nfe) {
+            Log.e(TAG, "Read a badly formatted battery capacity from "
+                    + file, nfe);
+        }
+        return getResources().getString(R.string.status_unavailable);
+    }
     private String parseBatteryCycle(String file) {
         try {
-            return Integer.parseInt(readLine(file)) + " Cycles";
+            return Float.parseFloat(readLine(file)) / 10 + " %";
         } catch (IOException ioe) {
             Log.e(TAG, "Cannot read battery cycle from "
                     + file, ioe);
